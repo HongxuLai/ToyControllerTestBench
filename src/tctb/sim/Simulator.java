@@ -1,6 +1,7 @@
 package tctb.sim;
 
 import tctb.controller.ToyController;
+import tctb.invariant.Invariants;
 import tctb.model.ActualState;
 import tctb.model.DesiredState;
 
@@ -11,6 +12,10 @@ public class Simulator {
     private final ToyController controller;
     private final DesiredState desired;
     private final ActualState actual;
+    private int stepIndex;
+    private Event lastEvent;
+    private int runningPodsBeforeStep;
+    private final int maxPods;
 
     public Simulator(ToyController controller, DesiredState desired, ActualState actual){
         if (controller == null || desired == null || actual == null) {
@@ -19,9 +24,16 @@ public class Simulator {
         this.controller = controller;
         this.desired = desired;
         this.actual = actual;
+        this.stepIndex = 0;
+        this.lastEvent = null;
+        this.runningPodsBeforeStep = actual().getRunningPods();
+        this.maxPods = 100;
     }
 
     public void step(Event event){
+        runningPodsBeforeStep = actual().getRunningPods();
+        // store the value of runningPods before step
+
         switch (event.getType()) {
             case TICK -> controller.reconcileOnce(desired, actual);
             case SET_DESIRED -> {
@@ -35,8 +47,15 @@ public class Simulator {
                 desired.setReplicas(k);
             }
         }
+        lastEvent = event; // write down event now
+        stepIndex ++; // write down which step now
+        Invariants.checkAll(this); // check by using all default methods
     }
 
     public DesiredState desired() { return desired; }
     public ActualState actual() { return actual; }
+    public int getStepIndex() { return stepIndex; }
+    public Event getLastEvent() { return lastEvent; }
+    public int getRunningPodsBeforeStep() { return runningPodsBeforeStep; }
+    public int getMaxPods() { return maxPods; }
 }
