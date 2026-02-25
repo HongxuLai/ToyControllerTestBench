@@ -46,6 +46,7 @@ public class Simulator {
                 }
                 desired.setReplicas(k);
             }
+            // other cases to be added
         }
         lastEvent = event; // write down event now
         stepIndex ++; // write down which step now
