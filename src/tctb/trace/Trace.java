@@ -34,9 +34,9 @@ public final class Trace {
     public String serialize() {
         StringBuilder sb = new StringBuilder();
         for (Event e : events) {
-            sb.append(serializeLine(e)).append("\n");
+            sb.append(serializeLine(e)).append("\n"); // add content at the end
         }
-        return sb.toString();
+        return sb.toString(); // change StringBuilder into String
     }
 
     // write the words in serialize() into file
@@ -46,7 +46,7 @@ public final class Trace {
 
     // change files into list. the reverse of serialize
     public static Trace parse(Path path) throws IOException {
-        // read all lines in files and get List<String> lines
+        // readAllLines() function: read all lines in files and get List<String> lines
         List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
         Trace t = new Trace();
         for (int i = 0; i < lines.size(); i++) {
@@ -84,7 +84,7 @@ public final class Trace {
             return null; // caller should skip; but we already trimmed empty earlier
         }
 
-        String[] parts = noComment.split("\\s+");
+        String[] parts = noComment.split("\\s+"); // split by space
         String head = parts[0];
 
         if("TICK".equals(head)) {

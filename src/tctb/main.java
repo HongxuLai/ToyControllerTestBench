@@ -21,8 +21,9 @@ public class main {
         DesiredState desired = new DesiredState(0);
         ActualState actual = new ActualState(0);
         ToyController controller = new ToyController();
+        int maxPods = 100;
 
-        Simulator sim = new Simulator(controller, desired, actual);
+        Simulator sim = new Simulator(controller, desired, actual, maxPods);
 
         printState("INIT", sim);
 

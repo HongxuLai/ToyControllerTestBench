@@ -20,8 +20,8 @@ public class TraceDemoMain {
         DesiredState desired = new DesiredState(0);
         ActualState actual = new ActualState(0);
         ToyController controller = new ToyController();
-        int maxPods = 10;
-        return new Simulator(controller, desired, actual);
+        int maxPods = 100;
+        return new Simulator(controller, desired, actual, maxPods);
     }
 
     public static void main(String[] args) throws Exception {

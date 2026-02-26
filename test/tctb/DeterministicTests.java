@@ -20,7 +20,8 @@ public class DeterministicTests {
         ToyController controller = new ToyController();
         DesiredState desired = new DesiredState(5);
         ActualState actual = new ActualState(0);
-        Simulator sim = new Simulator(controller, desired, actual);
+        int maxPods = 100;
+        Simulator sim = new Simulator(controller, desired, actual, maxPods);
 
         for(int i = 0; i < 5; i++){
             sim.step(Event.tick()); // runningPods converge up to 5
@@ -34,7 +35,8 @@ public class DeterministicTests {
         ToyController controller = new ToyController();
         DesiredState desired = new DesiredState(0);
         ActualState actual = new ActualState(7);
-        Simulator sim = new Simulator(controller, desired, actual);
+        int maxPods = 100;
+        Simulator sim = new Simulator(controller, desired, actual, maxPods);
 
         for(int i = 0; i < 7; i++){
             sim.step(Event.tick()); //runningPods converge down to 0
@@ -48,7 +50,8 @@ public class DeterministicTests {
         ToyController controller = new ToyController();
         DesiredState desired = new DesiredState(3);
         ActualState actual = new ActualState(3);
-        Simulator sim = new Simulator(controller, desired, actual);
+        int maxPods = 100;
+        Simulator sim = new Simulator(controller, desired, actual, maxPods);
 
         for(int i = 0; i < 10; i ++){
             sim.step(Event.tick()); // actual == desired, runningPods don't change
@@ -62,7 +65,8 @@ public class DeterministicTests {
         ToyController controller = new ToyController();
         DesiredState desired = new DesiredState(5);
         ActualState actual = new ActualState(0);
-        Simulator sim = new Simulator(controller, desired, actual);
+        int maxPods = 100;
+        Simulator sim = new Simulator(controller, desired, actual, maxPods);
 
         sim.step(Event.setDesired(2)); // change desired to 2
         assertEquals(0, sim.actual().getRunningPods());
@@ -90,7 +94,8 @@ public class DeterministicTests {
         ToyController controller = new ToyController();
         DesiredState desired = new DesiredState(5);
         ActualState actual = new ActualState(0);
-        Simulator sim = new Simulator(controller, desired, actual);
+        int maxPods = 100;
+        Simulator sim = new Simulator(controller, desired, actual, maxPods);
 
         assertThrows(IllegalArgumentException.class, () -> sim.step(Event.setDesired(-1)));
     }

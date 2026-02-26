@@ -17,7 +17,7 @@ public class Simulator {
     private int runningPodsBeforeStep;
     private final int maxPods;
 
-    public Simulator(ToyController controller, DesiredState desired, ActualState actual){
+    public Simulator(ToyController controller, DesiredState desired, ActualState actual, int maxPods){
         if (controller == null || desired == null || actual == null) {
             throw new IllegalArgumentException("controller/desired/actual cannot be null");
         }
@@ -27,7 +27,7 @@ public class Simulator {
         this.stepIndex = 0;
         this.lastEvent = null;
         this.runningPodsBeforeStep = actual().getRunningPods();
-        this.maxPods = 100;
+        this.maxPods = maxPods;
     }
 
     public void step(Event event){
