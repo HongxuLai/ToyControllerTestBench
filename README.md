@@ -168,3 +168,78 @@ Notes:
   3) parse the file into a new trace,
   4) replay on a fresh simulator,
   5) compare final `(desired, actual)` between original run and replay.
+
+
+## Checkpoint E: Randomized Runner (1000 runs, reproducible)
+
+This checkpoint adds a randomized stress-test runner that executes many independent simulation runs with reproducible randomness. On failure, it saves a replayable trace and exits with a non-zero status (CI-friendly).
+
+### Entry Points
+- `tctb.runner.RandomRunner`
+- `tctb.runner.ReplayRunner` (replay a failing trace)
+
+### RandomRunner CLI
+- `--seed <long>` **(required)**: master seed
+- `--maxPods <int>` **(required)**: upper bound for randomized init + invariants
+- `--runs <int>` *(default: 1000)*: number of runs
+- `--steps <int>` *(default: 100)*: events per run
+- `--traceOut <path>` *(default: examples)*: directory for failing traces
+
+Example:
+```text
+--seed 23 --maxPods 10 --runs 1000 --steps 100 --traceOut examples
+
+Workflow
+
+For each runIndex in [0..runs-1]:
+
+Derive runSeed = seed ^ runIndex (unique per run, still reproducible).
+
+Randomize initial state using runSeed:
+
+initDesired = rand(0..maxPods)
+
+initRunning = rand(0..maxPods)
+
+Execute steps random events:
+
+high probability: TICK
+
+low probability: SET_DESIRED rand(0..maxPods)
+
+Each step calls sim.step(event) (Checkpoint C invariants are checked after every step).
+
+Failure Output
+
+On the first failure, RandomRunner prints:
+
+seed, runIndex, runSeed, stepIndex
+
+initDesired, initRunning, maxPods
+
+last state: desired, running
+
+exception type/message
+
+It also writes a replayable trace:
+
+failing_trace_seed<seed>_run<runIndex>.txt under --traceOut
+
+Then exits with a non-zero status.
+
+Reproducing a Failure
+
+Use ReplayRunner with the failing trace + the printed init state:
+
+Required args:
+
+--trace <path>
+
+--maxPods <int>
+
+--initDesired <int>
+
+--initRunning <int>
+
+Example:
+--trace examples/failing_trace_seed23_run77.txt --maxPods 10 --initDesired 3 --initRunning 9
