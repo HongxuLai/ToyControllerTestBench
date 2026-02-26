@@ -11,21 +11,35 @@ A tiny test bench that simulates a Kubernetes-like control loop:
 
 ## Project Structure
 
-- `src/tctb/model/`
-    - `DesiredState`: mutable desired replicas
-    - `ActualState`: mutable running pods
 - `src/tctb/controller/`
-    - `ToyController`: `reconcileOnce(desired, actual)` changes running pods by at most 1
+  - `ToyController` — one-step reconcile logic (`reconcileOnce`)
+
+- `src/tctb/model/`
+  - `DesiredState` — desired replicas (control-plane target)
+  - `ActualState` — running pods (data-plane state)
+
 - `src/tctb/sim/`
-    - `EventType`: `SET_DESIRED`, `TICK` (future: `CRASH/RESTART`)
-    - `Event`: `tick()` and `setDesired(k)`
-    - `Simulator`: holds states and executes one event per `step(e)`
+  - `EventType`, `Event` — event definitions (`SET_DESIRED`, `TICK`)
+  - `Simulator` — executes events and runs invariants after each `step`
+
 - `src/tctb/invariant/`
-    - `Invariant`: rule interface
-    - `Invariants`: default rules registry + `checkAll(sim)`
-    - `impl/`: concrete invariants
-- `src/tctb/runner/` (or tests folder)
-    - deterministic / randomized tests (if present)
+  - `Invariant` — invariant interface (`check(Simulator s)`)
+  - `Invariants` — default invariant registry + `checkAll`
+  - `impl/` — concrete invariant implementations
+
+- `src/tctb/trace/`
+  - `Trace` — record/serialize/parse event sequences for replay
+
+- `src/tctb/runner/`
+  - `RandomRunner` — randomized stress testing with seed + failing trace output
+  - `ReplayRunner` — replay a saved failing trace from a specified initial state
+
+- `src/tctb/`
+  - `Main` — (optional) manual/demo entry point
+  - `TraceDemoMain` — trace record → write → parse → replay demo
+
+- `test/tctb/`
+  - `DeterministicTests` — deterministic unit/integration tests
 
 ---
 // Listed below are the work done by 2.21
